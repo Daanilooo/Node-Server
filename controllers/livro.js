@@ -1,5 +1,5 @@
 const fs = require ('fs')
-const {getTodosLivros, getLivroPorID, insereLivro} = require('../servicos/livro')
+const {getTodosLivros, getLivroPorID, insereLivro, modificaLivro,deletarLivro} = require('../servicos/livro')
 
 
 function getLivros(req, res) {
@@ -14,9 +14,16 @@ function getLivros(req, res) {
 
   function getID(req,res){
     try{
+
       const id = req.params.id
-      const livro = getLivroPorID(id)
-      res.send(livro)
+      if (id && Number(id)){
+        const livro = getLivroPorID(id)
+        res.send(livro)
+      }else{
+        res.status(422)
+        res.send("ID inválido!")
+      }
+      
     }catch(error){
         res.status(500)
         res.send(error.message)
@@ -26,10 +33,51 @@ function getLivros(req, res) {
   function postLivro(req,res){
     try{
       const livroNovo = req.body
-      insereLivro(livroNovo)
+      if(req.body.nome){ 
+        insereLivro(livroNovo)
       res.send("Livro inserido com sucesso")
       res.send(201)
+      }else{
+        res.status(422)
+        res.send("O campo nome é obrigatório.")
+      }
+      
+    }catch(error){
+      res.status(500)
+      res.send(error.message)
+    }
+  }
 
+  function patchLivro(req, res){
+    try{
+      const id = req.params.id
+      if (id && Number(id)){
+        const body = req.body
+
+        modificaLivro(body, id)
+        res.send("Item modificado com sucesso")
+      }else{
+        res.status(422)
+        res.send("ID inválido!")
+      }
+    }catch(error){
+      res.status(500)
+      res.send(error.message)
+    }
+  
+  }
+
+  function deleteLivro(req, res){
+    try{
+      const id = req.params.id
+      if(id && Number(id)){
+        deletarLivro(id)
+        res.send("Livro Deletado")
+      }else{
+        res.status(422)
+        res.send("ID inválido!")
+      }
+  
     }catch(error){
       res.status(500)
       res.send(error.message)
@@ -39,5 +87,7 @@ function getLivros(req, res) {
   module.exports = {
     getLivros,
     getID,
-    postLivro
+    postLivro,
+    patchLivro,
+    deleteLivro
   }
