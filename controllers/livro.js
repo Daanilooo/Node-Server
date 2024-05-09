@@ -1,6 +1,4 @@
-const fs = require ('fs')
 const {getTodosLivros, getLivroPorID, insereLivro, modificaLivro,deletarLivro} = require('../servicos/livro')
-
 
 function getLivros(req, res) {
     try{
